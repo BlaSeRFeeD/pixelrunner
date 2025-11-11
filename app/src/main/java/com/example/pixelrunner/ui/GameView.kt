@@ -12,22 +12,42 @@ import androidx.compose.ui.unit.dp
 import com.example.pixelrunner.R
 
 @Composable
-fun GameView() {
-    val infiniteTransition = rememberInfiniteTransition(label = "character_float")
-    val offsetY by infiniteTransition.animateFloat(
+fun GameView(
+    isJumping: Boolean = false,
+    moveDirection: String? = null
+) {
+    // Анимация "покачивания" при стоянии
+    val idleTransition = rememberInfiniteTransition(label = "idle")
+    val idleOffsetY by idleTransition.animateFloat(
         initialValue = 0f,
         targetValue = -10f,
         animationSpec = infiniteRepeatable(
             animation = tween(1000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "float"
+        label = "idle_float"
     )
+
+    // Анимация прыжка
+    val jumpOffset by animateFloatAsState(
+        targetValue = if (isJumping) -150f else 0f,
+        animationSpec = tween(durationMillis = 500, easing = EaseOutQuad),
+        label = "jump"
+    )
+
+    // Анимация движения влево/вправо
+    var positionX by remember { mutableStateOf(60f) }
+    LaunchedEffect(moveDirection) {
+        when (moveDirection) {
+            "left" -> positionX -= 15f
+            "right" -> positionX += 15f
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Фон
         Image(
-            painter = painterResource(id = R.drawable.backgroung),
+            painter = painterResource(id = R.drawable.background),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -40,7 +60,7 @@ fun GameView() {
             modifier = Modifier
                 .size(100.dp)
                 .align(Alignment.BottomStart)
-                .offset(x = 60.dp, y = offsetY.dp)
+                .offset(x = positionX.dp, y = (idleOffsetY + jumpOffset).dp)
         )
     }
 }

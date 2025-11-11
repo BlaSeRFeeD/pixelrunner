@@ -4,19 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.pixelrunner.R
 import com.example.pixelrunner.ui.theme.PixelRunnerTheme
 
 class MenuActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE // Горизонтальная ориентация
+
         setContent {
             PixelRunnerTheme {
                 MenuScreen(
@@ -24,9 +30,8 @@ class MenuActivity : ComponentActivity() {
                         val intent = Intent(this, GameActivity::class.java)
                         startActivity(intent)
                     },
-                    onContinue = {
-                        val intent = Intent(this, GameActivity::class.java)
-                        intent.putExtra("continue", true)
+                    onSettings = {
+                        val intent = Intent(this, SettingsActivity::class.java)
                         startActivity(intent)
                     },
                     onExit = {
@@ -39,12 +44,23 @@ class MenuActivity : ComponentActivity() {
 }
 
 @Composable
-fun MenuScreen(onPlay: () -> Unit, onContinue: () -> Unit, onExit: () -> Unit) {
+fun MenuScreen(onPlay: () -> Unit, onSettings: () -> Unit, onExit: () -> Unit) {
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier
+            .fillMaxSize()
     ) {
+        // Фон
+        Image(
+            painter = painterResource(id = R.drawable.n4x2_ee43_210428),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // Текст и кнопки
         Column(
+            modifier = Modifier
+                .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
@@ -52,8 +68,8 @@ fun MenuScreen(onPlay: () -> Unit, onContinue: () -> Unit, onExit: () -> Unit) {
             Button(onClick = onPlay) {
                 Text("Play")
             }
-            Button(onClick = onContinue) {
-                Text("Continue")
+            Button(onClick = onSettings) {
+                Text("Settings")
             }
             Button(onClick = onExit) {
                 Text("Exit")

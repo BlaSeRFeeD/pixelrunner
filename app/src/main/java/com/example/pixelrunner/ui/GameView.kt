@@ -13,7 +13,6 @@ import com.example.pixelrunner.R
 
 @Composable
 fun GameView() {
-    // Анимация — персонаж "дышит" (немного двигается вверх-вниз)
     val infiniteTransition = rememberInfiniteTransition(label = "character_float")
     val offsetY by infiniteTransition.animateFloat(
         initialValue = 0f,

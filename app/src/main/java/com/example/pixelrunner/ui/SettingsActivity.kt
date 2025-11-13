@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
 import com.example.pixelrunner.R
+import com.example.pixelrunner.data.MusicManager
 import com.example.pixelrunner.ui.theme.PixelRunnerTheme
 
 class SettingsActivity : ComponentActivity() {
@@ -39,6 +40,13 @@ fun SettingsScreen(onBack: () -> Unit) {
 
     var soundEnabled by remember { mutableStateOf(prefs.getBoolean("sound", true)) }
     var musicEnabled by remember { mutableStateOf(prefs.getBoolean("music", true)) }
+
+    // Если музыка включена при открытии настроек, запускаем её
+    LaunchedEffect(Unit) {
+        if (musicEnabled) {
+            MusicManager.start(context, R.raw.background_music)
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -102,9 +110,14 @@ fun SettingsScreen(onBack: () -> Unit) {
                 Text("Music", color = MaterialTheme.colorScheme.onBackground)
                 Switch(
                     checked = musicEnabled,
-                    onCheckedChange = {
-                        musicEnabled = it
-                        prefs.edit().putBoolean("music", it).apply()
+                    onCheckedChange = { enabled ->
+                        musicEnabled = enabled
+                        prefs.edit().putBoolean("music", enabled).apply()
+                        if (enabled) {
+                            MusicManager.start(context, R.raw.background_music)
+                        } else {
+                            MusicManager.stop()
+                        }
                     }
                 )
             }
@@ -116,6 +129,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                     prefs.edit().clear().apply()
                     soundEnabled = true
                     musicEnabled = true
+                    MusicManager.start(context, R.raw.background_music)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {

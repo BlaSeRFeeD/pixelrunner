@@ -16,12 +16,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pixelrunner.R
+import com.example.pixelrunner.data.MusicManager
 import com.example.pixelrunner.ui.theme.PixelRunnerTheme
 
 class MenuActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE // Горизонтальная ориентация
+        requestedOrientation =
+            android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE // Горизонтальная ориентация
+
+        // Запуск фоновой музыки
+        MusicManager.start(this, R.raw.background_music)
 
         setContent {
             PixelRunnerTheme {
@@ -40,6 +45,21 @@ class MenuActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MusicManager.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MusicManager.stop()
     }
 }
 

@@ -25,7 +25,6 @@ class MenuActivity : ComponentActivity() {
         requestedOrientation =
             android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE // Горизонтальная ориентация
 
-        // Запуск фоновой музыки
         MusicManager.start(this, R.raw.background_music)
 
         setContent {
@@ -77,7 +76,6 @@ fun MenuScreen(onPlay: () -> Unit, onSettings: () -> Unit, onExit: () -> Unit) {
             modifier = Modifier.fillMaxSize()
         )
 
-        // Текст и кнопки
         Column(
             modifier = Modifier
                 .align(Alignment.Center),

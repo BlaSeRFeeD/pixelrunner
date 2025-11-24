@@ -41,7 +41,6 @@ fun SettingsScreen(onBack: () -> Unit) {
     var soundEnabled by remember { mutableStateOf(prefs.getBoolean("sound", true)) }
     var musicEnabled by remember { mutableStateOf(prefs.getBoolean("music", true)) }
 
-    // Если музыка включена при открытии настроек, запускаем её
     LaunchedEffect(Unit) {
         if (musicEnabled) {
             MusicManager.start(context, R.raw.background_music)
@@ -58,14 +57,12 @@ fun SettingsScreen(onBack: () -> Unit) {
             contentScale = ContentScale.Crop
         )
 
-        // Полупрозрачная подложка для читаемости
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
         )
 
-        // Контент поверх фона
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -99,7 +96,6 @@ fun SettingsScreen(onBack: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 🎵 Музыка
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -123,7 +119,6 @@ fun SettingsScreen(onBack: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(32.dp))
 
-            // ♻️ Сброс прогресса
             Button(
                 onClick = {
                     prefs.edit().clear().apply()

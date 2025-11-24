@@ -1,8 +1,5 @@
 package com.example.pixelrunner.ui
 
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,7 +13,6 @@ class GameActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Принудительно включаем альбомную ориентацию
         requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         setContent {
@@ -29,29 +25,36 @@ class GameActivity : ComponentActivity() {
 
 @Composable
 fun GameScreen() {
-    var isJumping by remember { mutableStateOf(false) }
-    var moveDirection by remember { mutableStateOf<String?>(null) }
-    val scope = rememberCoroutineScope() // ✅ используем scope
+    // Управление
+    var moveLeft by remember { mutableStateOf(false) }
+    var moveRight by remember { mutableStateOf(false) }
+    var jumpRequested by remember { mutableStateOf(false) }
+    var attackRequested by remember { mutableStateOf(false) }
+    var actionRequested by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        GameView(isJumping = isJumping, moveDirection = moveDirection)
+        // Игровая логика и рисование
+        GameView(
+            moveLeft = moveLeft,
+            moveRight = moveRight,
+            jumpRequested = jumpRequested,
+            onJumpConsumed = { jumpRequested = false },
+            attackRequested = attackRequested,
+            onAttackConsumed = { attackRequested = false },
+            restartRequested = actionRequested,
+            onRestartConsumed = { actionRequested = false },
+            modifier = Modifier.fillMaxSize()
+        )
 
+        // Контролы
         ControlButtons(
-            onMoveLeft = { moveDirection = "left" },
-            onMoveRight = { moveDirection = "right" },
-            onJump = {
-                isJumping = true
-                scope.launch {
-                    kotlinx.coroutines.delay(600)
-                    isJumping = false
-                }
-            },
-            onAttack = {
-                // TODO: логика удара
-            },
-            onAction = {
-                // TODO: логика взаимодействия
-            }
+            onMoveLeftDown = { moveLeft = true },
+            onMoveLeftUp = { moveLeft = false },
+            onMoveRightDown = { moveRight = true },
+            onMoveRightUp = { moveRight = false },
+            onJump = { jumpRequested = true },
+            onAttack = { attackRequested = true },
+            onAction = { actionRequested = true }
         )
     }
 }
